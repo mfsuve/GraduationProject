@@ -1,0 +1,17 @@
+train the NN with rotated books.
+
+Data Augmentation in Keras
+
+resize image to 100x150
+
+==================================================
+
+First run with Theano backend - It guessed 5 books correctly for at least 3 tries
+Then tried data augmentation with ImageDataGenerator - Again it gave coorect results
+
+Switced to Tensorflow backend - Got a weird Future Warning
+It's accuraccy dropped to 0.2
+Started to try the Worksheet pdf file
+
+After following the pdf file, my computer struggles to train the NN.
+I started to slow down

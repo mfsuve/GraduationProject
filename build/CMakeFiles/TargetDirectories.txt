@@ -1,0 +1,11 @@
+/home/mustafa/PCL_TUTORIAL/build/CMakeFiles/edit_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/CMakeFiles/rebuild_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/grabber/CMakeFiles/edit_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/grabber/CMakeFiles/rebuild_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/grabber/CMakeFiles/openni_grabber.dir
+/home/mustafa/PCL_TUTORIAL/build/savepcd/CMakeFiles/edit_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/savepcd/CMakeFiles/rebuild_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/savepcd/CMakeFiles/savepcd.dir
+/home/mustafa/PCL_TUTORIAL/build/readpcd/CMakeFiles/edit_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/readpcd/CMakeFiles/rebuild_cache.dir
+/home/mustafa/PCL_TUTORIAL/build/readpcd/CMakeFiles/readpcd.dir
