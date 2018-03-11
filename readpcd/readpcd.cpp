@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <pcl/console/parse.h>
 #include <pcl/filters/extract_indices.h>
@@ -34,28 +34,36 @@
 
 #define PType pcl::PointXYZRGBA
 
-void v(pcl::PointIndices::Ptr inliers) {
-    std::cout << "inliers indices size:  " << inliers->indices.size() << std::endl;
+std::string png_name;
+std::string pcd_name;
 
-    for(int i = 0; i < inliers->indices.size(); i++) {
-        std::cout << "(" << inliers->indices[i] << ")" << std::endl;
-        boost::this_thread::sleep (boost::posix_time::seconds (5));
+void parse_arguments(int argc, char* argv[]) {
+    std::string cloud_name("hayvan");
+    std::string i("1");
+    bool test = false;
+    if(argc > 1)
+        cloud_name = std::string(argv[1]);
+    if(argc > 2)
+        if(std::string(argv[2]).compare("test") != 0)
+            i = std::string(argv[2]);
+        else
+            test = true;
+    if(argc > 3)
+        test = true;
+
+    if(test) {
+        pcd_name = "../../testdata/" + cloud_name + "/" + cloud_name + ".pcd";
+        png_name = "png_files/" + cloud_name + "_test.png";
+    }
+    else {
+        png_name = "png_files/" + cloud_name + i + ".png";
+        pcd_name = "../../data/" + cloud_name + "/" + cloud_name + i + ".pcd";
     }
 }
 
 int main (int argc, char* argv[]) {
-    std::string cloud_name;
-    if(argc > 1)
-        cloud_name = argv[1];
-    else
-        cloud_name = "hayvan";
 
-    std::string png_name = "png_files/" + cloud_name + ".png";
-    std::string pcd_name = "../../data/" + cloud_name + "/" + cloud_name + ".pcd";
-    if(argc > 2 && std::string(argv[2]).compare("test") == 0) {
-        pcd_name = "../../testdata/" + cloud_name + "/" + cloud_name + ".pcd";
-        png_name = "png_files/" + cloud_name + "_test.png";
-    }
+    parse_arguments(argc, argv);
 
     pcl::PointCloud<PType>::Ptr cloud (new pcl::PointCloud<PType>);
     pcl::io::loadPCDFile (pcd_name.c_str(), *cloud);
@@ -64,26 +72,16 @@ int main (int argc, char* argv[]) {
 
     pcl::visualization::CloudViewer viewer("Cloud Viewer");
 
-    std::cout << "cloud->width: " << cloud->width << std::endl;
-    std::cout << "cloud->height: " << cloud->height << std::endl;
-
     pcl::PointCloud<PType>::Ptr final (new pcl::PointCloud<PType>);
-
-//    pcl::PointCloud<PType>::Ptr final_organized (new pcl::PointCloud<PType>);
 
     // FILTERING
     pcl::PointCloud<PType>::Ptr cloud_filtered (new pcl::PointCloud<PType>);
     std::vector<int> distance_filter_indices;
 
-//    double center_distance = cloud->points [cloud->width >> 1].z;
-//    std::cout << "center_distance: " << center_distance << std::endl;
-
     pcl::PassThrough<PType> pass;
     pass.setInputCloud (cloud);
     pass.setFilterFieldName ("z");
-    pass.setFilterLimits (0.2, 0.8);
-//    pass.setKeepOrganized(true);
-//    pass.setFilterLimitsNegative (true);
+    pass.setFilterLimits (0.2, 1.2);
     pass.filter (distance_filter_indices);
 
     pcl::copyPointCloud<PType>(*cloud, distance_filter_indices, *cloud_filtered);
@@ -136,35 +134,12 @@ int main (int argc, char* argv[]) {
             maxCluster->indices = it->indices;
     }
 
-    std::cout << std::endl << "======================================" << std::endl << std::endl;
-
     pcl::PointCloud<PType>::Ptr cloud_cluster (new pcl::PointCloud<PType>);
     for (std::vector<int>::const_iterator pit = maxCluster->indices.begin (); pit != maxCluster->indices.end (); ++pit)
         cloud_cluster->points.push_back (final->points[*pit]); //*
     cloud_cluster->width = cloud_cluster->points.size ();
     cloud_cluster->height = 1;
     cloud_cluster->is_dense = true;
-/*
-    // Trying to make an organized point cloud
-    final_organized->width = cloud->width;
-    final_organized->height = cloud->height;
-    final_organized->is_dense = true;
-    final_organized->points.resize (final_organized->width * final_organized->height);
-
-    std::cout << "2cloud: " << cloud_name << std::endl;
-    std::cout << "pcd  : " << pcd_name << std::endl;
-    std::cout << "png  : " << png_name << std::endl;
-
-    std:: cout << "maxCluster->indices.size(): " << maxCluster->indices.size() << std::endl;
-
-    std::cout << "passed" << std::endl;
-
-    for(int i = 0; i < maxCluster->indices.size(); i++) {
-        int index = maxCluster->indices[i];
-        final_organized->points[index] = cloud_cluster->points[index];
-        std::cout << "i: " << i << std::endl;
-    }
-*/
 
     W = cloud->width;
     H = cloud->height;
@@ -178,9 +153,7 @@ int main (int argc, char* argv[]) {
     }
     image2.close();
 
-    viewer.showCloud(cloud);
-
-    boost::thread* view = new boost::thread(boost::bind(&v, inliers));
+    viewer.showCloud(final);
 
     while (!viewer.wasStopped ()) {
         boost::this_thread::sleep (boost::posix_time::seconds (1));

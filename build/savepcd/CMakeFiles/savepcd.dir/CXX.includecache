@@ -7,6 +7,10 @@
 #IncludeRegexTransform: 
 
 /home/mustafa/PCL_TUTORIAL/savepcd/savepcd.cpp
+iostream
+-
+string
+-
 pcl/io/openni_grabber.h
 -
 pcl/visualization/cloud_viewer.h

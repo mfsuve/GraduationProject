@@ -261,8 +261,10 @@ grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o
  /usr/include/pcl-1.7/pcl/common/impl/copy_point.hpp
  /usr/include/pcl-1.7/pcl/common/impl/eigen.hpp
  /usr/include/pcl-1.7/pcl/common/impl/io.hpp
+ /usr/include/pcl-1.7/pcl/common/impl/projection_matrix.hpp
  /usr/include/pcl-1.7/pcl/common/io.h
  /usr/include/pcl-1.7/pcl/common/point_tests.h
+ /usr/include/pcl-1.7/pcl/common/projection_matrix.h
  /usr/include/pcl-1.7/pcl/common/synchronizer.h
  /usr/include/pcl-1.7/pcl/common/time.h
  /usr/include/pcl-1.7/pcl/console/parse.h
@@ -270,6 +272,10 @@ grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o
  /usr/include/pcl-1.7/pcl/conversions.h
  /usr/include/pcl-1.7/pcl/correspondence.h
  /usr/include/pcl-1.7/pcl/exceptions.h
+ /usr/include/pcl-1.7/pcl/features/feature.h
+ /usr/include/pcl-1.7/pcl/features/impl/feature.hpp
+ /usr/include/pcl-1.7/pcl/features/impl/normal_3d.hpp
+ /usr/include/pcl-1.7/pcl/features/normal_3d.h
  /usr/include/pcl-1.7/pcl/filters/boost.h
  /usr/include/pcl-1.7/pcl/filters/extract_indices.h
  /usr/include/pcl-1.7/pcl/filters/filter.h
@@ -278,7 +284,9 @@ grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o
  /usr/include/pcl-1.7/pcl/filters/impl/filter.hpp
  /usr/include/pcl-1.7/pcl/filters/impl/filter_indices.hpp
  /usr/include/pcl-1.7/pcl/filters/impl/passthrough.hpp
+ /usr/include/pcl-1.7/pcl/filters/impl/voxel_grid.hpp
  /usr/include/pcl-1.7/pcl/filters/passthrough.h
+ /usr/include/pcl-1.7/pcl/filters/voxel_grid.h
  /usr/include/pcl-1.7/pcl/for_each_type.h
  /usr/include/pcl-1.7/pcl/geometry/planar_polygon.h
  /usr/include/pcl-1.7/pcl/impl/cloud_iterator.hpp
@@ -289,6 +297,7 @@ grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o
  /usr/include/pcl-1.7/pcl/io/file_io.h
  /usr/include/pcl-1.7/pcl/io/grabber.h
  /usr/include/pcl-1.7/pcl/io/impl/pcd_io.hpp
+ /usr/include/pcl-1.7/pcl/io/io.h
  /usr/include/pcl-1.7/pcl/io/lzf.h
  /usr/include/pcl-1.7/pcl/io/openni_camera/openni.h
  /usr/include/pcl-1.7/pcl/io/openni_camera/openni_depth_image.h
@@ -301,11 +310,25 @@ grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o
  /usr/include/pcl-1.7/pcl/io/openni_camera/openni_ir_image.h
  /usr/include/pcl-1.7/pcl/io/openni_grabber.h
  /usr/include/pcl-1.7/pcl/io/pcd_io.h
+ /usr/include/pcl-1.7/pcl/kdtree/flann.h
+ /usr/include/pcl-1.7/pcl/kdtree/impl/kdtree_flann.hpp
+ /usr/include/pcl-1.7/pcl/kdtree/kdtree.h
+ /usr/include/pcl-1.7/pcl/kdtree/kdtree_flann.h
+ /usr/include/pcl-1.7/pcl/octree/impl/octree_pointcloud.hpp
+ /usr/include/pcl-1.7/pcl/octree/impl/octree_search.hpp
+ /usr/include/pcl-1.7/pcl/octree/octree_base.h
+ /usr/include/pcl-1.7/pcl/octree/octree_container.h
+ /usr/include/pcl-1.7/pcl/octree/octree_iterator.h
+ /usr/include/pcl-1.7/pcl/octree/octree_key.h
+ /usr/include/pcl-1.7/pcl/octree/octree_nodes.h
+ /usr/include/pcl-1.7/pcl/octree/octree_pointcloud.h
+ /usr/include/pcl-1.7/pcl/octree/octree_search.h
  /usr/include/pcl-1.7/pcl/pcl_base.h
  /usr/include/pcl-1.7/pcl/pcl_config.h
  /usr/include/pcl-1.7/pcl/pcl_exports.h
  /usr/include/pcl-1.7/pcl/pcl_macros.h
  /usr/include/pcl-1.7/pcl/point_cloud.h
+ /usr/include/pcl-1.7/pcl/point_representation.h
  /usr/include/pcl-1.7/pcl/point_traits.h
  /usr/include/pcl-1.7/pcl/point_types.h
  /usr/include/pcl-1.7/pcl/register_point_struct.h
@@ -357,8 +380,16 @@ grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o
  /usr/include/pcl-1.7/pcl/sample_consensus/sac_model_plane.h
  /usr/include/pcl-1.7/pcl/sample_consensus/sac_model_sphere.h
  /usr/include/pcl-1.7/pcl/sample_consensus/sac_model_stick.h
+ /usr/include/pcl-1.7/pcl/search/impl/kdtree.hpp
+ /usr/include/pcl-1.7/pcl/search/impl/organized.hpp
  /usr/include/pcl-1.7/pcl/search/impl/search.hpp
+ /usr/include/pcl-1.7/pcl/search/kdtree.h
+ /usr/include/pcl-1.7/pcl/search/octree.h
+ /usr/include/pcl-1.7/pcl/search/organized.h
+ /usr/include/pcl-1.7/pcl/search/pcl_search.h
  /usr/include/pcl-1.7/pcl/search/search.h
+ /usr/include/pcl-1.7/pcl/segmentation/extract_clusters.h
+ /usr/include/pcl-1.7/pcl/segmentation/impl/extract_clusters.hpp
  /usr/include/pcl-1.7/pcl/segmentation/impl/sac_segmentation.hpp
  /usr/include/pcl-1.7/pcl/segmentation/sac_segmentation.h
  /usr/include/pcl-1.7/pcl/visualization/area_picking_event.h

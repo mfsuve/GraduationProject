@@ -5,7 +5,6 @@ from matplotlib.pyplot import imshow, show, title
 names = ['hayvan', 'sayitut', 'sefiller', 'sokrates', 'sultan']
 test = True
 
-
 def autocrop(image, mask=None, threshold=0):
 	if mask is None:
 		mask = image
@@ -128,12 +127,12 @@ def draw(contours, image):
 def findBookEdges(image):
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY)[1]
-	closed = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, np.ones((15,15),np.uint8))
-	opened = cv2.morphologyEx(closed, cv2.MORPH_OPEN, np.ones((30,30),np.uint8))
+	closed = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+	opened = cv2.morphologyEx(closed, cv2.MORPH_OPEN, np.ones((30, 30), np.uint8))
 	opened = largest_component(opened)
 	blurred = cv2.GaussianBlur(opened, (15, 15), 0)
 	# blurred = autorotate(blurred, isgray=True)
-	edges = cv2.Canny(blurred,0,1,apertureSize = 3)
+	edges = cv2.Canny(blurred, 0, 1, apertureSize=3)
 
 	# blurred = cv2.cvtColor(blurred, cv2.COLOR_GRAY2BGR)
 	# image[edges>0] = [255,0,0]
@@ -141,6 +140,9 @@ def findBookEdges(image):
 	# contours, hierarchy = cv2.findContours(edges, 1, 2)
 	return edges
 
+
+if not test:
+	names = [(name + x) for name in names for x in ['1', '2']]
 
 for name in names:
 	if test:
@@ -151,7 +153,7 @@ for name in names:
 	image = cv2.imread('../build/readpcd/png_files/' + name + '.png')
 	edges = findBookEdges(image)
 
-	im2, contours, hierarchy = cv2.findContours(edges,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+	im2, contours, hierarchy = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
 	mask = draw(contours, image)
 	image, mask = autorotate(image, mask, isgray=True)

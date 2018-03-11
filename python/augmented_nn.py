@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import pickle
 from matplotlib import pyplot as plt
 from keras.models import Sequential, Model
 from keras.layers.core import Dense, Dropout, Activation, Flatten
@@ -10,6 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 names = ['hayvan', 'sayitut', 'sefiller', 'sokrates', 'sultan']
 num_classes = len(names)
 
+
 def load_data():
 	path = 'finals/reduced/'
 	train_img = []
@@ -19,6 +21,7 @@ def load_data():
 		test_img.append(cv2.resize(cv2.imread(path + name + '_test.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
 
 	return (np.array(train_img), np.arange(num_classes)), (np.array(test_img), np.arange(num_classes))
+
 
 def create_model():
 	m = Sequential()
@@ -39,11 +42,12 @@ def create_model():
 
 	return m
 
+
 def examine(guess=None):
 	if guess is not None:
 		plt.imshow(X_test[guess, ::-1, :, ::-1])
 		plt.show()
-		predictions = model.predict(X_test_3ch[guess:guess+1])
+		predictions = model.predict(X_test_3ch[guess:guess + 1])
 		print('Guess is', names[np.argmax(predictions)])
 	else:
 		guesses = np.argmax(model.predict(X_test_3ch), axis=1)
@@ -74,6 +78,25 @@ def examine(guess=None):
 	plt.show()
 
 
+def augmentation_fit():
+	train_datagen = ImageDataGenerator(
+		rotation_range=40,
+		width_shift_range=0.2,
+		height_shift_range=0.2,
+		shear_range=0.2,
+		zoom_range=0.2,
+		horizontal_flip=True,
+		fill_mode='reflect')  # I changed it from nearest to reflect
+
+	train_datagen.fit(X_train_3ch)
+	train_generator = train_datagen.flow(X_train_3ch, Y_train, batch_size=32)
+
+	return model.fit_generator(train_generator, steps_per_epoch=20, epochs=30, validation_data=(X_test_3ch, Y_test))
+
+
+# examine(guess=None)
+
+
 # Load images
 (X_train, y_train), (X_test, y_test) = load_data()
 # Adjust sizes
@@ -86,19 +109,9 @@ X_test_3ch = X_test.reshape(num_classes, 150, 100, 3)
 X_train_3ch = X_train_3ch.astype('float32') / 255
 X_test_3ch = X_test_3ch.astype('float32') / 255
 
-train_datagen = ImageDataGenerator(
-        rotation_range=40,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        fill_mode='nearest')
-
-train_datagen.fit(X_train_3ch)
-train_generator = train_datagen.flow(X_train_3ch, Y_train, batch_size=32)
-
 model = create_model()
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
-history = model.fit_generator(train_generator, steps_per_epoch=20, epochs=30, validation_data=(X_test_3ch, Y_test))
-examine(guess=None)
+
+history = augmentation_fit()
+
+pickle.dump(history, open("save.p", "wb"))
