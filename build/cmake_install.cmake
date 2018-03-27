@@ -1,4 +1,4 @@
-# Install script for directory: /home/mustafa/PCL_TUTORIAL
+# Install script for directory: /home/mustafa/PCL_TUTORIAL/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

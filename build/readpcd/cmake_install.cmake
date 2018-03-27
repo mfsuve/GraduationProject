@@ -1,4 +1,4 @@
-# Install script for directory: /home/mustafa/PCL_TUTORIAL/readpcd
+# Install script for directory: /home/mustafa/PCL_TUTORIAL/src/readpcd
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

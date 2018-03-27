@@ -1,4 +1,4 @@
-# Install script for directory: /home/mustafa/PCL_TUTORIAL/grabber
+# Install script for directory: /home/mustafa/PCL_TUTORIAL/src/grabber
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

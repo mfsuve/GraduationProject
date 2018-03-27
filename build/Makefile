@@ -48,7 +48,7 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/mustafa/PCL_TUTORIAL
+CMAKE_SOURCE_DIR = /home/mustafa/PCL_TUTORIAL/src
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /home/mustafa/PCL_TUTORIAL/build
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/mustafa/PCL_TUTORIAL/build
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/bin/cmake-gui -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache

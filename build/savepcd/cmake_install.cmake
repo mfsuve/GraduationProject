@@ -1,4 +1,4 @@
-# Install script for directory: /home/mustafa/PCL_TUTORIAL/savepcd
+# Install script for directory: /home/mustafa/PCL_TUTORIAL/src/savepcd
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

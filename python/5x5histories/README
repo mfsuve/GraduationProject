@@ -1,0 +1,5 @@
+The data augmentation histories were trained with		=>	steps_per_epoch=6, epochs=100
+
+The others in model folders trained with regular augmentation	=>	steps_per_epoch=20, epochs=30
+
+They are trained and tested on model 2

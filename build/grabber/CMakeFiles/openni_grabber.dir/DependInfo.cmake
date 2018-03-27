@@ -4,21 +4,23 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/mustafa/PCL_TUTORIAL/grabber/openni_grabber.cpp" "/home/mustafa/PCL_TUTORIAL/build/grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o"
+  "/home/mustafa/PCL_TUTORIAL/src/grabber/openni_grabber.cpp" "/home/mustafa/PCL_TUTORIAL/build/grabber/CMakeFiles/openni_grabber.dir/openni_grabber.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # Preprocessor definitions for this target.
 set(CMAKE_TARGET_DEFINITIONS_CXX
+  "DISABLE_DAVIDSDK"
+  "DISABLE_DSSDK"
+  "DISABLE_ENSENSO"
+  "DISABLE_LIBUSB_1_0"
+  "DISABLE_OPENNI"
+  "DISABLE_OPENNI2"
   "DISABLE_PCAP"
   "DISABLE_PNG"
-  "EIGEN_USE_NEW_STDVECTOR"
-  "EIGEN_YES_I_KNOW_SPARSE_MODULE_IS_NOT_STABLE_YET"
+  "DISABLE_RSSDK"
   "FLANN_STATIC"
-  "QT_CORE_LIB"
-  "QT_GUI_LIB"
-  "QT_NO_DEBUG"
-  "QT_WIDGETS_LIB"
+  "USE_FREETYPE"
   "qh_QHpointer"
   "vtkFiltersFlowPaths_AUTOINIT=1(vtkFiltersParallelFlowPaths)"
   "vtkIOExodus_AUTOINIT=1(vtkIOParallelExodus)"
@@ -47,15 +49,28 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/include/x86_64-linux-gnu/freetype2"
   "/usr/include/python2.7"
   "/usr/include/tcl"
-  "/usr/include/pcl-1.7"
+  "/home/mustafa/software/pcl-pcl-1.8.1/build/include"
   "/usr/include/eigen3"
-  "/usr/include/ni"
-  "/usr/include/openni2"
-  "/usr/include/x86_64-linux-gnu/qt5"
-  "/usr/include/x86_64-linux-gnu/qt5/QtWidgets"
-  "/usr/include/x86_64-linux-gnu/qt5/QtGui"
-  "/usr/include/x86_64-linux-gnu/qt5/QtCore"
-  "/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64"
+  "/home/mustafa/software/pcl-pcl-1.8.1/common/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/octree/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/io/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/kdtree/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/search/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/sample_consensus/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/filters/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/geometry/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/visualization/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/2d/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/features/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/ml/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/segmentation/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/keypoints/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/surface/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/registration/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/recognition/include"
+  "/home/mustafa/software/pcl-pcl-1.8.1/stereo/include"
+  "/usr/local/include"
+  "/home/mustafa/software/anaconda3/include"
   )
 
 # Targets to which this target links.
