@@ -4,7 +4,7 @@ import pickle
 from matplotlib import pyplot as plt
 from keras.models import Sequential, Model
 from keras.layers.core import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D, Input, ZeroPadding2D, ThresholdedReLU
+from keras.layers import Conv2D, MaxPooling2D, Input, ZeroPadding2D, ThresholdedReLU, BatchNormalization
 from keras import backend as K
 from keras.utils import np_utils
 from keras.preprocessing.image import ImageDataGenerator
@@ -15,34 +15,29 @@ num_train_classes = 0
 global mode
 
 
-def relu(x):
-	from keras import backend as K
-	return K.maximum(x, 0)
-
-
 def load_data():
 	train_path = 'finals/reduced/train/'
 	test_path = 'finals/reduced/test/'
 	train_img = []
 	test_img = []
-	num_scrapped_book = 100
+	num_scrapped_book = 25
 	# Collect initials
 	for name in names:
-		train_img.append(cv2.resize(cv2.imread(train_path + name + '1.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
+#		train_img.append(cv2.resize(cv2.imread(train_path + name + '1.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
 		train_img.append(cv2.resize(cv2.imread(train_path + name + '2.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
-		test_img.append(cv2.resize(cv2.imread(test_path + name + '_test.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
+		test_img.append(cv2.resize(cv2.imread(test_path + name + '_test1.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
+		test_img.append(cv2.resize(cv2.imread(test_path + name + '_test2.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
 
-	first_books_train_labels = [val for val in range(num_test_classes) for _ in range(2)]
+	first_books_test_labels = [val for val in range(num_test_classes) for _ in range(2)]
 
 	# Collect web-scrapped books
 	for i in range(num_scrapped_book):
 		train_img.append(cv2.resize(cv2.imread(train_path + 'book_' + str(i) + '.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
 
 	global num_train_classes
-	scrapped_books_labels = [val for val in range(num_test_classes, num_scrapped_book + num_test_classes)]
 	num_train_classes = num_test_classes + num_scrapped_book
 
-	return (np.array(train_img), first_books_train_labels + scrapped_books_labels), (np.array(test_img), np.arange(num_test_classes))
+	return (np.array(train_img), np.arange(num_train_classes)), (np.array(test_img), np.array(first_books_test_labels))
 
 
 def create_model1():
@@ -99,11 +94,11 @@ def create_model_vgg16():
 	top_model = Sequential()
 	top_model.add(ZeroPadding2D((1, 1), input_shape=base_model.output_shape[1:]))
 	top_model.add(Conv2D(32, (3, 3), activation='relu'))
-	#
+	top_model.add(BatchNormalization())
 	top_model.add(ThresholdedReLU(0))
 	top_model.add(ZeroPadding2D((1, 1)))
 	top_model.add(Conv2D(32, (3, 3), activation='relu'))
-	#
+	top_model.add(BatchNormalization())
 	top_model.add(ThresholdedReLU(0))
 
 	top_model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -160,17 +155,40 @@ def augmentation_fit():
 	train_datagen.fit(X_train_3ch)
 	train_generator = train_datagen.flow(X_train_3ch, Y_train, batch_size=32)
 
-	return model.fit_generator(train_generator, steps_per_epoch=20, epochs=30, validation_data=(X_test_3ch, Y_test))
+	return model.fit_generator(train_generator, steps_per_epoch=20, epochs=60, validation_data=(X_test_3ch, Y_test))
 
 
 def normal_fit():
 	global mode
 	mode = 'normal'
-	return model.fit(X_train_3ch, Y_train, batch_size=32, epochs=300, validation_data=(X_test_3ch, Y_test))
+	return model.fit(X_train_3ch, Y_train, batch_size=32, epochs=600, validation_data=(X_test_3ch, Y_test))
+
+def validate_data(m='train'):
+	print('X_train.size():', len(X_train))
+	print('y_train.size():', len(y_train))
+	print('X_test.size():', len(X_test))
+	print('y_test.size():', len(y_test))
+
+	if m == 'test':
+		X = X_test
+		Y = y_test
+	else:
+		X = X_train
+		Y = y_train
+
+	for pair in zip(X, Y):
+		try:
+			plt.title(names[pair[1]])
+		except IndexError:
+			plt.title(pair[1])
+		plt.imshow(pair[0][:, :, ::-1])
+		plt.show()
 
 
 # Load images
 (X_train, y_train), (X_test, y_test) = load_data()
+
+# validate_data('train')
 
 # Adjust sizes
 Y_train = np_utils.to_categorical(y_train, num_train_classes)
@@ -186,15 +204,15 @@ X_test_3ch = X_test_3ch.astype('float32') / 255
 # model = create_model2()
 model = create_model_vgg16()
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
-model.optimizer.lr = 0.001  # it was 0.01
+K.set_value(model.optimizer.lr, 0.001)  # it was 0.01
 
 # print(K.image_data_format())
 # print(K.backend())
 
-history = augmentation_fit()
-# history = normal_fit()
+# history = augmentation_fit()
+history = normal_fit()
 
-pickle.dump(history.history, open('110x5histories/vgg16/' + K.backend() + '/' + mode + '_' + K.backend() + '_lrdropped_1.p', 'wb'))
+pickle.dump(history.history, open('30x10histories/vgg16/' + K.backend() + '/' + mode + '_' + K.backend() + '_lrdropped_1.p', 'wb'))
 
-model_name = mode + '_' + K.backend() + '_vgg16_110x5_lrdropped'
+model_name = mode + '_' + K.backend() + '_vgg16_30x10_lrdropped_longer'
 model.save('saved_weights/' + model_name + '.h5')

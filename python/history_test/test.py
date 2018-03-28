@@ -1,9 +1,9 @@
 from matplotlib import pyplot as plt
 import pickle
 
-augmented = True
+augmented = False
 lrdropped = True
-file = '110x5'
+file = '30x10'
 model = 3
 backend = 'tensorflow'
 # backend = 'theano'
@@ -24,24 +24,26 @@ for i in range(1, 6):
 	plt.suptitle('Tested on ' + file + ', Model Name: ' + model_name + '\nMode: ' + mode + ', Backend: ' + backend)
 
 	plt.subplot(221)
-	plt.ylim(0, 1)
-	plt.title('val_acc')
-	plt.plot(history['val_acc'])
-
-	plt.subplot(222)
-	plt.ylim(0, 1)
+	plt.ylim(0, 1.05)
 	plt.title('acc')
 	plt.plot(history['acc'])
 
-	plt.subplot(223)
-	plt.ylim(0, 10)
-	plt.title('val_loss')
-	plt.plot(history['val_loss'])
+	plt.subplot(222)
+	plt.ylim(0, 1.05)
+	plt.title('val_acc')
+	plt.plot(history['val_acc'])
 
-	plt.subplot(224)
+	# ylim = max(history['loss'] + history['val_loss']) + 0.05
+
+	plt.subplot(223)
 	plt.ylim(0, 10)
 	plt.title('loss')
 	plt.plot(history['loss'])
+
+	plt.subplot(224)
+	plt.ylim(0, 10)
+	plt.title('val_loss')
+	plt.plot(history['val_loss'])
 
 	figManager = plt.get_current_fig_manager()
 	figManager.window.showMaximized()
