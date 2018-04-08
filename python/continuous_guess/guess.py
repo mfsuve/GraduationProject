@@ -8,39 +8,47 @@ from threading import Thread
 
 import time
 
-global model
 names = ['hayvan', 'sayitut', 'sefiller', 'sokrates', 'sultan']
 
-def load(model_name):
-	global model
-	while True:
+class Guess:
+	autoclose = True
+	model = None
+
+	@classmethod
+	def load(cls, model_name):
+		global model
+		while True:
+			try:
+				cls.model = load_model(model_name)
+				break
+			except OSError:
+				print('Model at ' + model_name + ' not found. Trying again in 30 seconds...')
+				time.sleep(30)
+
+	@classmethod
+	def guess(cls, file):
+		image = cv2.imread(file)
+		image = cv2.resize(image, (100, 150), interpolation=cv2.INTER_CUBIC)
+		image = image.reshape(150, 100, 3)
+		image = image.astype('float32') / 255
+		predictions = cls.model.predict(np.expand_dims(image, axis=0))
+		fig = plt.figure()
+		index = np.argmax(predictions)
+		if isinstance(index, tuple):
+			index = index[0]
 		try:
-			model = load_model(model_name)
-			break
-		except OSError:
-			print('Model at ' + model_name + ' not found. Trying again in 30 seconds...')
-			time.sleep(30)
+			plt.title(names[index])
+		except IndexError:
+			plt.title('book_' + str(index - 5))
+		plt.imshow(image[:, :, ::-1])
+		closeThread = Thread(target=cls.close, args=(fig,))
+		closeThread.start()
+		plt.show()
+		closeThread.join()
 
-
-
-def guess(file):
-	global model
-	image = cv2.imread(file)
-	image = cv2.resize(image, (100, 150), interpolation=cv2.INTER_CUBIC)
-	image = image.reshape(150, 100, 3)
-	image = image.astype('float32') / 255
-	predictions = model.predict(np.expand_dims(image, axis=0))
-	fig = plt.figure()
-	plt.title(names[np.argmax(predictions)])
-	plt.imshow(image[:, :, ::-1])
-	close = Thread(target=cls, args=(fig,))
-	close.start()
-	plt.show()
-	close.join()
-
-
-
-def cls(fig):
-	time.sleep(5)
-	print('Figure closed..')
-	plt.close(fig)
+	@classmethod
+	def close(cls, fig):
+		if cls.autoclose:
+			time.sleep(5)
+			print('Figure closed..')
+			plt.close(fig)

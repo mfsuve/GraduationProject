@@ -3,22 +3,23 @@
 import time
 import signal
 import os
-import guess
+from guess import Guess as guess
 
-exit = False
+Exit = False
+guess.autoclose = False
 
 
 def signal_handler(signal, frame):
-	global exit
-	exit = True
+	global Exit
+	Exit = True
 
 
 signal.signal(signal.SIGINT, signal_handler)
-guess.load('../saved_weights/normal_tensorflow_vgg16_10x5.h5')
+guess.load('../saved_weights/augmentation_tensorflow_vgg16_30x10_lrdropped_longer.h5')
 
 print('Model is loaded.')
 
-while not exit:
+while not Exit:
 	files = os.listdir('image')
 	for file in files:
 		print('Processing on ' + file)

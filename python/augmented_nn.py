@@ -20,7 +20,7 @@ def load_data():
 	test_path = 'finals/reduced/test/'
 	train_img = []
 	test_img = []
-	num_scrapped_book = 25
+	num_scrapped_book = 15
 	# Collect initials
 	for name in names:
 #		train_img.append(cv2.resize(cv2.imread(train_path + name + '1.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
@@ -104,6 +104,7 @@ def create_model_vgg16():
 	top_model.add(MaxPooling2D(pool_size=(2, 2)))
 
 	top_model.add(Flatten())
+	top_model.add(BatchNormalization())
 	top_model.add(Dense(num_train_classes, activation='softmax'))
 
 	m = Model(inputs=base_model.input, outputs=top_model(base_model.output))
@@ -155,7 +156,7 @@ def augmentation_fit():
 	train_datagen.fit(X_train_3ch)
 	train_generator = train_datagen.flow(X_train_3ch, Y_train, batch_size=32)
 
-	return model.fit_generator(train_generator, steps_per_epoch=20, epochs=60, validation_data=(X_test_3ch, Y_test))
+	return model.fit_generator(train_generator, steps_per_epoch=10, epochs=100, validation_data=(X_test_3ch, Y_test))
 
 
 def normal_fit():
@@ -188,7 +189,7 @@ def validate_data(m='train'):
 # Load images
 (X_train, y_train), (X_test, y_test) = load_data()
 
-# validate_data('train')
+# validate_data('test')
 
 # Adjust sizes
 Y_train = np_utils.to_categorical(y_train, num_train_classes)
@@ -209,10 +210,12 @@ K.set_value(model.optimizer.lr, 0.001)  # it was 0.01
 # print(K.image_data_format())
 # print(K.backend())
 
-# history = augmentation_fit()
-history = normal_fit()
+history = augmentation_fit()
+# history = normal_fit()
 
-pickle.dump(history.history, open('30x10histories/vgg16/' + K.backend() + '/' + mode + '_' + K.backend() + '_lrdropped_1.p', 'wb'))
+model_name = '20x10_vgg16_' + mode + '_' + K.backend() + '_lr_0.001'
+pickle.dump(history.history, open('lr_test_histories/' + model_name + '.p', 'wb'))
+# pickle.dump(history.history, open('30x10histories/vgg16/' + K.backend() + '/' + mode + '_' + K.backend() + '_lrdropped_1.p', 'wb'))
 
-model_name = mode + '_' + K.backend() + '_vgg16_30x10_lrdropped_longer'
+# model_name = mode + '_' + K.backend() + '_vgg16_30x10_lrdropped_longer'
 model.save('saved_weights/' + model_name + '.h5')
