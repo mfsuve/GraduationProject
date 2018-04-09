@@ -2,8 +2,8 @@ from matplotlib import pyplot as plt
 import pickle
 import os
 
-inFormat = True
-folder = 'lr_test_histories/'
+inFormat = False
+folder = 'sc_histories/'
 
 augmented = True
 lrdropped = True
@@ -57,8 +57,12 @@ if inFormat:
 		show_plot(history)
 
 else:
-	for file_name in os.listdir('../' + folder):
+	dirs = os.listdir('../' + folder)
+	dirs.sort()
+	for file_name in dirs:
 		history = pickle.load(open('../' + folder + file_name, 'rb'))
 		t = file_name[:-2].split('_')
+		print(t)
 		title = 'Tested on {0} {1}, Mode: {2}\nBackend: {3}, Learning Rate: {4}'.format(t[0], t[1], t[2], t[3], t[5])
+		title += ("\n" + " ".join(t[6:])) if len(t) > 6 else ""
 		show_plot(history, title=title)
