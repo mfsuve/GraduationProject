@@ -32,6 +32,9 @@ else:
 		history = pickle.load(open('../' + folder + file_name, 'rb'))
 		t = file_name[:-2].split('_')
 		print(t)
-		title = 'Tested on {0} {1}, Mode: {2}\nBackend: {3}, Learning Rate: {4}'.format(t[0], t[1], t[2], t[3], t[5])
-		title += ("\n" + " ".join(t[6:])) if len(t) > 6 else ""
+		try:
+			title = 'Tested on {0} {1}, Mode: {2}\nBackend: {3}, Learning Rate: {4}'.format(t[0], t[1], t[2], t[3], t[5])
+			title += ("\n" + " ".join(t[6:])) if len(t) > 6 else ""
+		except IndexError:
+			title = file_name
 		show_plot(history, title=title)
