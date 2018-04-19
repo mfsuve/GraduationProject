@@ -21,7 +21,7 @@ def load_data():
 	test_path = 'finals/reduced/test/'
 	train_img = []
 	test_img = []
-	num_scrapped_book = 5
+	num_scrapped_book = 100
 	# Collect initials
 	for name in names:
 #		train_img.append(cv2.resize(cv2.imread(train_path + name + '1.png'), (100, 150), interpolation=cv2.INTER_CUBIC))
@@ -116,22 +116,26 @@ def create_model_vgg16():
 
 	m = Model(inputs=base_model.input, outputs=top_model(base_model.output))
 
+	# m.summary()
+
 	return m
 
 
-def siamese_batch(X, datagen, batch_size=32):
+def siamese_generator(X, datagen, batch_size=32):
 	cls_num = X.shape[0]
+	batch_size = min(batch_size, cls_num - 1)
 	categories = np.random.choice(cls_num, size=(batch_size,), replace=False)
 	pairs = [np.zeros((batch_size, 150, 100, 3)) for i in range(2)]
 	targets = np.zeros((batch_size,))
 	targets[batch_size//2:] = 1
 
-	for i in range(batch_size):
-		category = categories[i]
-		pairs[0][i, :, :, :] = datagen.random_transform(X[category])
-		category_2 = category if i >= batch_size // 2 else (category + np.random.randint(1, cls_num)) % cls_num
-		pairs[1][i, :, :, :] = datagen.random_transform(X[category_2])
-	return pairs, targets
+	while True:
+		for i in range(batch_size):
+			category = categories[i]
+			pairs[0][i, :, :, :] = datagen.random_transform(X[category])
+			category_2 = category if i >= batch_size // 2 else (category + np.random.randint(1, cls_num)) % cls_num
+			pairs[1][i, :, :, :] = datagen.random_transform(X[category_2])
+		yield (pairs, targets)
 
 
 def augmentation_fit():
@@ -147,32 +151,57 @@ def augmentation_fit():
 		fill_mode='constant')  # Constant zero
 
 	train_datagen.fit(X_train_3ch)
-	losses = []
+	# losses = []
 
-	for i in range(100):
-		(inputs, targets) = siamese_batch(X_train_3ch, train_datagen, 9)
+	# for i in range(100):
+	# 	(inputs, targets) = siamese_batch(X_train_3ch, train_datagen, 9)
+	#
+	# 	for g in range(9):
+	# 		plt.suptitle('Same' if targets[g] == 1 else 'Different')
+	# 		plt.subplot(1, 2, 1)
+	# 		plt.imshow(inputs[0][g, :, :, ::-1])
+	#
+	# 		plt.subplot(1, 2, 2)
+	# 		plt.imshow(inputs[1][g, :, :, ::-1])
+	# 		plt.show()
+	#
+	# 	loss = model.train_on_batch(inputs, targets)
+	#
+	# 	### TODO: Calculate Accuracy Here !!!
+	#
+	# 	losses.append(loss)
+	# 	print('iteration {},\ttraining loss: {}'.format(i, loss))
+	#
+	# return {'loss': losses, 'acc': [], 'val_loss': [], 'val_acc': []}
 
-		for g in range(9):
-			plt.suptitle('Same' if targets[g] == 1 else 'Different')
-			plt.subplot(1, 2, 1)
-			plt.imshow(inputs[0][g, :, :, ::-1])
-
-			plt.subplot(1, 2, 2)
-			plt.imshow(inputs[1][g, :, :, ::-1])
-			plt.show()
-
-		loss = model.train_on_batch(inputs, targets)
-
-		### TODO: Calculate Accuracy Here !!!
-
-		losses.append(loss)
-		print('iteration {},\ttraining loss: {}'.format(i, loss))
-
-	return {'loss': losses, 'acc': [], 'val_loss': [], 'val_acc': []}
-
-	# train_generator = train_datagen.flow(X_train_3ch, Y_train, batch_size=32)
-
+	train_generator = siamese_generator(X_train_3ch, train_datagen)
 	# return model.fit_generator(train_generator, steps_per_epoch=30, epochs=200, validation_data=(X_test_3ch, Y_test))
+
+	# Testing the generator
+	# for (pairs, targets) in train_generator:
+	# 	for i in range(len(targets)):
+	# 		target = targets[i]
+	# 		plt.suptitle('Same!' if target == 1 else 'Different!')
+	# 		plt.subplot(1, 2, 1)
+	# 		plt.imshow(pairs[0][i, :, :, ::-1])
+	# 		plt.subplot(1, 2, 2)
+	# 		plt.imshow(pairs[1][i, :, :, ::-1])
+	# 		plt.show()
+
+	# i = 0
+	# for (pairs, targets) in train_generator:
+	# 	print('inputs shape:', np.shape(pairs))
+	# 	print('target shape:', np.shape(targets))
+	# 	print('inputs type:', type(pairs))
+	# 	print('target type:', type(targets))
+	#
+	# 	loss = model.train_on_batch(pairs, targets)
+	# 	print('## i:', i, 'loss:', loss)
+	# 	i += 1
+
+	# fit_generator asks for tuples I think, look to see what type train_generator sends
+	return model.fit_generator(train_generator, steps_per_epoch=2, epochs=10)
+	# return model.fit_generator(train_generator, steps_per_epoch=30, epochs=200)
 
 
 def normal_fit():
@@ -227,15 +256,18 @@ def run(lr=0.001, augmented=True, modelno=3):  # If modelno changes, change the 
 	# model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 	# K.set_value(model.optimizer.lr, lr)  # it was 0.01
 
-	print('laerning rate is', K.get_value(model.optimizer.lr))
+	model.count_params()
+
+	print('learning rate is', K.get_value(model.optimizer.lr))
 
 	if augmented:
 		history = augmentation_fit()
 	else:
 		history = normal_fit()
 
-	model_name = '195x10_vgg16_' + mode + '_' + K.backend() + '_lr_' + str(lr) + '_longer'
-	pickle.dump(history.history, open('histories/' + model_name + '.p', 'wb'))
+	model_name = 'siamese_vgg16_' + mode + '_' + K.backend()
+	# model_name = '195x10_vgg16_' + mode + '_' + K.backend() + '_lr_' + str(lr) + '_longer'
+	pickle.dump(history.history, open('siamese_histories/' + model_name + '.p', 'wb'))
 
 	# model.save('saved_weights/' + model_name + '.h5')
 
